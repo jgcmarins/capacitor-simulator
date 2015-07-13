@@ -25,7 +25,6 @@ import capacitor.charge.ElectricCharge;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.geometry.Rectangle2D;
 
 public class Experiment {
 
