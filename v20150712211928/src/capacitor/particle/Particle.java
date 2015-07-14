@@ -17,19 +17,22 @@ import capacitor.charge.ElectricCharge;
 
 public class Particle {
 
+	private static final String E_PATH = new String("/images/e.png");
+	private static final String P_PATH = new String("/images/p.png");
+
 	private ElectricField Ef;
 	private ElectricCharge q;
 	private double m; // mass
 
 	private double a; // acceleration a = ((q * Ef)/m)
-	private double v; // velocity v = (v0 + (a * t))
-	private double s; // position s = ((v0 * t) + ((a * (t*t))/2))
+	private double v; // velocity v = (v0 + (a * t)) -> (a * t)
+	private double s; // position s = (s0 + (v0 * t) + ((a * (t*t))/2)) -> ((a * (t*t))/2)
 
 	private double t; // total time
 
-	private double particlePosition;
+	private double particlePosition; // position on capacitor
 
-	private ImageView image;
+	private ImageView image; // image of particle
 
 	public Particle(ElectricField Ef, ElectricCharge q, double m) {
 		this.Ef = Ef;
@@ -48,9 +51,9 @@ public class Particle {
 
 	/* setters */
 
-	public void setCharge(ElectricCharge q) { this.q = q; }
-
 	public void setElectricField(ElectricField Ef) { this.Ef = Ef; }
+
+	public void setCharge(ElectricCharge q) { this.q = q; }
 
 	public void setMass(double m) { this.m = m; }
 
@@ -68,40 +71,40 @@ public class Particle {
 	}
 
 	public void setImage() {
-		if(this.q.get() < 0) this.image = new ImageView(new Image(getClass().getResourceAsStream("/images/e.png")));
-		else this.image = new ImageView(new Image(getClass().getResourceAsStream("/images/p.png")));
+		if(this.q.get() < 0) this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.E_PATH)));
+		else this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.P_PATH)));
 	}
 
 	/* getters */
 
-	public ElectricCharge getCharge() { return this.q; }
-
 	public ElectricField getElectricField() { return this.Ef; }
+
+	public ElectricCharge getCharge() { return this.q; }
 
 	public double getMass() { return this.m; }
 
 	public double getAcceleration() {
-		this.calculatesAcceleration();
+		this.calculateAcceleration();
 		return this.a;
 	}
 
 	public double getVelocity(double t) {
-		this.calculatesVelocity(t);
+		this.calculateVelocity(t);
 		return this.v;
 	}
 
 	public double getPosition(double t) {
-		this.calculatesPosition(t);
+		this.calculatePosition(t);
 		return this.s;
 	}
 
 	public double getTotalTime(double d) {
-		this.calculatesTotalTime(d);
+		this.calculateTotalTime(d);
 		return this.t;
 	}
 
 	public double getParticlePosition(double length, double t, double d) {
-		this.calculatesParticlePosition(length, t, d);
+		this.calculateParticlePosition(length, t, d);
 		return this.particlePosition;
 	}
 
@@ -109,24 +112,30 @@ public class Particle {
 
 	/* methods */
 
-	private void calculatesAcceleration() {
+	private void calculateAcceleration() {
 		this.a = ((this.q.get() * this.Ef.get())/this.getMass()); // calculates the acceleration
 	}
 
-	private void calculatesVelocity(double t) { // calculates the velocity
-		this.v = (this.getAcceleration() * t);
-		if(this.v < 0) this.v *= -1;
+	private void calculateVelocity(double t) { // calculates the velocity
+		double a = this.getAcceleration();
+		if(a < 0) a *= -1;
+		this.v = (a * t);
 	}
 
-	private void calculatesPosition(double t) { this.s = (t + ((this.getAcceleration() * (t * t))/2)); } // calculates the position
+	private void calculatePosition(double t) { // calculates the position
+		double a = this.getAcceleration();
+		if(a < 0) a *= -1;
+		this.s = ((a * (t * t))/2);
+	}
 
-	private void calculatesTotalTime(double d) {
-		a = this.getAcceleration();
+	private void calculateTotalTime(double d) { // calculates time taken to travel a distance d
+		double a = this.getAcceleration();
 		if(a < 0) a *= -1;
 		this.t = Math.sqrt((2 * d)/a);
 	}
 
-	private void calculatesParticlePosition(double length, double t, double d) {
+	private void calculateParticlePosition(double length, double t, double d) { // calculates particle position inside capacitor
 		this.particlePosition = ((length * this.getPosition(t))/d);
+		//if(this.q.get() < 0) this.particlePosition *= -1;
 	}
 }
