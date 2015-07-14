@@ -80,10 +80,13 @@ public class Information {
 	public HBox getFooter() { return this.footer; }
 
 	public void setAll() { // setts all values
-		this.sigma = Double.parseDouble(this.sigmaInput.getText());
-		this.d = Double.parseDouble(this.dInput.getText());
-		this.m = Double.parseDouble(this.mInput.getText());
-		this.q = Double.parseDouble(this.qInput.getText());
+
+		/* collects information */
+
+		this.sigma = Double.parseDouble(this.sigmaInput.getText()); // information about superficial density
+		this.d = Double.parseDouble(this.dInput.getText()); // information about distance
+		this.m = Double.parseDouble(this.mInput.getText()); // information about mass
+		this.q = Double.parseDouble(this.qInput.getText()); // information about charge
 	}
 
 	public double getSigma() { return this.sigma; }

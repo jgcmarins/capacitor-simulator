@@ -70,7 +70,7 @@ public class Particle {
 		this.image.setTranslateY(y);
 	}
 
-	public void setImage() {
+	public void setImage() { // sets image based on charge
 		if(this.q.get() < 0) this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.E_PATH)));
 		else this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.P_PATH)));
 	}

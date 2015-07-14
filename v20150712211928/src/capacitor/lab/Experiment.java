@@ -81,8 +81,9 @@ public class Experiment {
 		this.delay = new Timeline();
 		this.info = new Information();
 
-		this.buildExperiment();
 		this.time = 0.0;
+
+		this.buildExperiment();
 	}
 
 	private Parent createContent() { // creates main content
@@ -158,7 +159,6 @@ public class Experiment {
 		});
 
 		this.info.start.setOnAction(e -> { // setting action for 'Start' button
-			System.out.println("total time: "+this.particle.getTotalTime(this.capacitor.getDistance()));
 			this.startExperiment();
 		});
 
@@ -179,15 +179,14 @@ public class Experiment {
 
 	private void newExperiment() { // create nes experiment
 
-		/* collects information */
+		/* initialize capacitor components */
 
 		this.field = new ElectricField(this.info.getSigma());
 		this.capacitor = new Capacitor(this.field, this.info.getD());
 		this.charge = new ElectricCharge(this.info.getQ());
-
 		this.particle = new Particle(this.field, this.charge, this.info.getM());
 
-		/* creates particle based on charge */
+		/* creates particle image based on charge */
 
 		this.particle.setImage();
 
@@ -195,11 +194,11 @@ public class Experiment {
 
 		this.setParticlePosition();
 
-		GridPane.setConstraints(this.particle.getImage(), 1, 0); // adding to the middle
-		this.grid.getChildren().add(this.particle.getImage());
+		GridPane.setConstraints(this.particle.getImage(), 1, 0); // adds to the second column
+		this.grid.getChildren().add(this.particle.getImage()); // adds to grid
 	}
 
-	private void setParticlePosition() {
+	private void setParticlePosition() { // sets particle position based on charge
 		if(this.particle.getCharge().get() < 0) this.particle.setParticlePosition(this.ce.getTranslateX(), Experiment.PADDING);
 		else this.particle.setParticlePosition(this.cp.getTranslateX(), Experiment.PADDING);
 	}
