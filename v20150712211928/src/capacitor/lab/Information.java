@@ -43,17 +43,12 @@ public class Information {
 	public Button set;
 	public Button start;
 
-	/* simulation delay */
-
-	private Timeline delay;
-
 	/* header and footer */
 
 	private HBox header;
 	private HBox footer;
 
-	public Information(Timeline delay) {
-		this.delay = delay;
+	public Information() {
 
 		this.header = new HBox(Information.PADDING);
 		this.header.setPadding(new Insets(Information.PADDING));

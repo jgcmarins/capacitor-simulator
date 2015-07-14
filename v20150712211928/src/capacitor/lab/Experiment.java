@@ -22,13 +22,12 @@ import javafx.util.Duration;
 import capacitor.field.ElectricField;
 import capacitor.core.Capacitor;
 import capacitor.charge.ElectricCharge;
+import capacitor.particle.Particle;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Experiment {
-
-	private static double t;
 
 	private static final int EXP_W = 1200; // width
 	private static final int EXP_H = 300; // heigth
@@ -63,16 +62,19 @@ public class Experiment {
 
 	/* images */
 
-	private ImageView particle;
 	private ImageView ce;
 	private ImageView cp;
 
+	private Particle particle;
+
+	private double time;
+
 	public Experiment(Stage stage) {
-		Experiment.t = 0; // time
 		this.stage = stage;
 		this.delay = new Timeline();
-		this.info = new Information(this.delay);
+		this.info = new Information();
 		this.buildExperiment();
+		this.time = 0.0;
 	}
 
 	private Parent createContent() { // creates main content
@@ -82,7 +84,7 @@ public class Experiment {
 
 		this.createCapacitor();
 
-		this.grid.getChildren().addAll(this.cp, this.particle, this.ce); // adding components to grid
+		this.grid.getChildren().addAll(this.cp, this.particle.getImage(), this.ce); // adding components to grid
 
 		this.root = new VBox(); // main structure
 		this.root.setPadding(new Insets(Experiment.PADDING));
@@ -100,14 +102,21 @@ public class Experiment {
 
 	private void setEngine() { // builds simulation engine
 		this.frame = new KeyFrame(Duration.seconds(Experiment.FPS), event -> { // for each event updates particle position
-			this.particle.setTranslateX(this.particle.getTranslateX() + (this.charge.getPosition(Experiment.t)));
-			this.info.velocity.setText((new Double(this.charge.getVelocity(Experiment.t))).toString()); // updates velocity info
-			Experiment.t += 0.0000001; // increments time
-			if(this.particle.getTranslateX() >= this.ce.getTranslateX()) { // stops, when particle reaches capacitor's wall
-				this.particle.setTranslateX(this.ce.getTranslateX());
+			this.particle.getImage().setTranslateX(this.particle.getImage().getTranslateX() +
+				(this.particle.getParticlePosition(this.getTotalLength(), this.getTime(), this.capacitor.getDistance())));
+			this.info.velocity.setText((new Double(this.particle.getVelocity(this.getTime()))).toString()); // updates velocity info
+			double currentTime = System.currentTimeMillis();
+			System.out.println("current time: "+currentTime);
+			System.out.println("current positition in display: "+this.particle.getImage().getTranslateX());
+			System.out.println("current positition in experiment: "
+				+this.particle.getParticlePosition(this.getTotalLength(), this.getTime(), this.capacitor.getDistance()));
+			System.out.println("current distance: "+this.particle.getPosition(currentTime));
+			System.out.println("\n\n");
+			if(this.particle.getImage().getTranslateX() >= this.ce.getTranslateX()) { // stops, when particle reaches capacitor's wall
+				this.particle.getImage().setTranslateX(this.ce.getTranslateX());
 				this.delay.stop();
-			} else if(this.particle.getTranslateX() <= this.cp.getTranslateX()) {  // stops, when particle reaches capacitor's wall
-				this.particle.setTranslateX(this.cp.getTranslateX());
+			} else if(this.particle.getImage().getTranslateX() <= this.cp.getTranslateX()) {  // stops, when particle reaches capacitor's wall
+				this.particle.getImage().setTranslateX(this.cp.getTranslateX());
 				this.delay.stop();
 			}
 		});
@@ -117,11 +126,14 @@ public class Experiment {
 		this.scene = new Scene(this.createContent()); // creates scene
 
 		this.info.set.setOnAction(e -> { // setting action for 'Set' button
+			this.stopExperiment();
 			this.info.setAll();
 			this.newExperiment();
 		});
 
 		this.info.start.setOnAction(e -> { // setting action for 'Start' button
+			System.out.println(this.particle.getTotalTime(this.capacitor.getDistance()));
+			this.time = System.currentTimeMillis();
 			this.startExperiment();
 		});
 
@@ -135,30 +147,30 @@ public class Experiment {
 	private void stopExperiment() { this.delay.stop(); } // stops experiment
 
 	private void newExperiment() { // create nes experiment
-		Experiment.t = 0;
 
 		/* collects information */
 
 		this.field = new ElectricField(this.info.getSigma());
 		this.capacitor = new Capacitor(this.field, this.info.getD());
-		this.charge = new ElectricCharge(this.field, this.info.getM(), this.info.getQ(), 0);
+		this.charge = new ElectricCharge(this.info.getQ());
+
+		this.particle = new Particle(this.field, this.charge, this.info.getM());
 
 		/* creates particle based on charge */
 
-		if(this.charge.get() < 0) this.particle = new ImageView(new Image(getClass().getResourceAsStream("/images/e.png")));
-		else this.particle = new ImageView(new Image(getClass().getResourceAsStream("/images/p.png")));
+		this.particle.setImage();
 
 		/* sets particle position and add to grid */
 
 		this.setParticlePosition();
 
-		GridPane.setConstraints(this.particle, 1, 0); // adding to the middle
-		this.grid.getChildren().add(this.particle);
+		GridPane.setConstraints(this.particle.getImage(), 1, 0); // adding to the middle
+		this.grid.getChildren().add(this.particle.getImage());
 	}
 
 	private void setParticlePosition() {
-		this.particle.setTranslateX(((this.ce.getTranslateX() - this.cp.getTranslateX())/2));
-		this.particle.setTranslateY(Experiment.PADDING);
+		if(this.particle.getCharge().get() < 0) this.particle.setParticlePosition(this.ce.getTranslateX(), Experiment.PADDING);
+		else this.particle.setParticlePosition(this.cp.getTranslateX(), Experiment.PADDING);
 	}
 
 	private void createCapacitor() { // create capacitor components/images
@@ -168,11 +180,16 @@ public class Experiment {
 		this.ce = new ImageView(new Image(getClass().getResourceAsStream("/images/ce.png")));
 		this.ce.setTranslateX(Experiment.EXTREME_POSITION); // negative capacitor on the right
 
-		this.particle = new ImageView();
-		this.setParticlePosition(); // particle on the middle
+		this.particle = new Particle(null, null, 0);
 
 		GridPane.setConstraints(this.cp, 0, 0); // setting positive capacitor to first column
-		GridPane.setConstraints(this.particle, 1, 0); // setting particle to second column
+		GridPane.setConstraints(this.particle.getImage(), 1, 0); // setting particle to second column
 		GridPane.setConstraints(this.ce, 2, 0); // setting negative capacitor to third column
 	}
+
+	private double getTotalLength() {
+		return (this.ce.getTranslateX() - this.cp.getTranslateX());
+	}
+
+	private double getTime() { return (System.currentTimeMillis() - this.time); }
 }

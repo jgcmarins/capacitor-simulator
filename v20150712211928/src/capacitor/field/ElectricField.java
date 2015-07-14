@@ -11,7 +11,7 @@ package capacitor.field;
 
 public class ElectricField {
 
-	public static final double E0 = (8.854187817 * (Math.pow(10, -12))); // permittivity
+	public static final double E0 = (8.85418 * (Math.pow(10, -12))); // permittivity
 
 	private double E;
 	private double sigma;
