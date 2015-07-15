@@ -134,6 +134,7 @@ public class Particle {
 		double a = this.getAcceleration();
 		if(a < 0) a *= -1;
 		this.v = (a * t);
+		this.v /= Math.pow(10, 10);
 	}
 
 	private void calculatePosition(double t) { // calculates the position

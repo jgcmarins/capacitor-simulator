@@ -39,15 +39,28 @@ public class Information {
 	private TextField mNotationInput;
 	private TextField qNotationInput;
 
+	/* labels */
+
 	private Label sigmaLabel;
 	private Label dLabel;
 	private Label mLabel;
 	private Label qLabel;
 	private Label notationLabel;
 
-	/* velocity label */
+	private Label velocityLabel;
+	private Label fieldLabel;
+	private Label accelerationLabel;
+	private Label timeLabel;
 
 	public Label velocity;
+	public Label field;
+	public Label acceleration;
+	public Label time;
+
+	private Label velocityUnity;
+	private Label fieldUnity;
+	private Label accelerationUnity;
+	private Label timeUnity;
 
 	/* buttons */
 
@@ -57,7 +70,7 @@ public class Information {
 	/* header and footer */
 
 	private GridPane header;
-	private HBox footer;
+	private GridPane footer;
 
 	public Information() {
 
@@ -65,8 +78,11 @@ public class Information {
 		this.header.setVgap(5);
 		this.header.setHgap(5);
 
-		this.footer = new HBox(Information.PADDING);
-		this.footer.setPadding(new Insets(Information.PADDING));
+		//this.footer = new HBox(Information.PADDING);
+		//this.footer.setPadding(new Insets(Information.PADDING));
+		this.footer = new GridPane();
+		this.footer.setVgap(5);
+		this.footer.setHgap(5);
 
 		this.set = new Button("Set");
 		this.start = new Button("Start");
@@ -79,7 +95,6 @@ public class Information {
 		this.dInput = new TextField();
 		this.mInput = new TextField();
 		this.qInput = new TextField();
-		this.velocity = new Label();
 
 		this.sigmaNotationInput = new TextField();
 		this.dNotationInput = new TextField();
@@ -91,6 +106,21 @@ public class Information {
 		this.mLabel = new Label("m (kg):");
 		this.qLabel = new Label("q (C):");
 		this.notationLabel = new Label("Notation (x10):");
+
+		this.velocity = new Label();
+		this.field = new Label();
+		this.acceleration = new Label();
+		this.time = new Label();
+
+		this.velocityLabel = new Label("Velocity:");
+		this.fieldLabel = new Label("Electric field:");
+		this.accelerationLabel = new Label("Acceleration:");
+		this.timeLabel = new Label("Total time:");
+
+		this.velocityUnity = new Label("m/s");
+		this.fieldUnity = new Label("N/C |");
+		this.accelerationUnity = new Label("m/s² |");
+		this.timeUnity = new Label("s |");
 
 		GridPane.setConstraints(this.sigmaLabel, 0, 0);
 		GridPane.setConstraints(this.sigmaInput, 1, 0);
@@ -109,15 +139,30 @@ public class Information {
 		GridPane.setConstraints(this.qNotationInput, 7, 1);
 
 		this.header.getChildren().addAll(this.sigmaLabel, this.sigmaInput, this.dLabel, this.dInput,
-			this.mLabel, this.mInput, this.qLabel, this.qInput, this.set, this.start,
-			this.notationLabel, this.sigmaNotationInput, this.dNotationInput, this.mNotationInput, this.qNotationInput);
+				this.mLabel, this.mInput, this.qLabel, this.qInput, this.set, this.start,
+				this.notationLabel, this.sigmaNotationInput, this.dNotationInput, this.mNotationInput, this.qNotationInput);
 
-		this.footer.getChildren().addAll(new Label("Velocity:"), this.velocity, new Label("m/s")); // adding contents do footer
+		GridPane.setConstraints(this.fieldLabel, 0, 0);
+		GridPane.setConstraints(this.field, 1, 0);
+		GridPane.setConstraints(this.fieldUnity, 2, 0);
+		GridPane.setConstraints(this.accelerationLabel, 3, 0);
+		GridPane.setConstraints(this.acceleration, 4, 0);
+		GridPane.setConstraints(this.accelerationUnity, 5, 0);
+		GridPane.setConstraints(this.timeLabel, 6, 0);
+		GridPane.setConstraints(this.time, 7, 0);
+		GridPane.setConstraints(this.timeUnity, 8, 0);
+		GridPane.setConstraints(this.velocityLabel, 9, 0);
+		GridPane.setConstraints(this.velocity, 10, 0);
+		GridPane.setConstraints(this.velocityUnity, 11, 0);
+
+		this.footer.getChildren().addAll(this.fieldLabel, this.field, this.fieldUnity, this.accelerationLabel,
+				this.acceleration, this.accelerationUnity, this.timeLabel, this.time, this.timeUnity,
+				this.velocityLabel, this.velocity, this.velocityUnity); // adding contents do footer
 	}
 
 	public GridPane getHeader() { return this.header; }
 
-	public HBox getFooter() { return this.footer; }
+	public GridPane getFooter() { return this.footer; }
 
 	public void setAll() { // setts all values
 

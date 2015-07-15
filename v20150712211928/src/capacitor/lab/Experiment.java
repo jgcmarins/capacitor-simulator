@@ -38,8 +38,6 @@ public class Experiment {
 
 	private static final double FPS = 0.016; // frames per second
 
-	private static final long MS = 1000000000;
-
 	private static final String TITLE = new String("Capacitor");
 
 	private static final String CP_PATH = new String("/images/cp.png");
@@ -106,6 +104,11 @@ public class Experiment {
 
 		this.setEngine();
 
+		this.info.velocity.setText("0.0"); // updates velocity info
+		this.info.time.setText("0.0"); // updates time info
+		this.info.field.setText("0.0"); // updates field info
+		this.info.acceleration.setText("0.0"); // updates acceleration info
+
 		this.delay.getKeyFrames().add(this.frame);
 		this.delay.setCycleCount(Timeline.INDEFINITE);
 
@@ -140,15 +143,18 @@ public class Experiment {
 			}
 
 			this.info.velocity.setText((new Double(this.particle.getVelocity(this.getTime()))).toString()); // updates velocity info
+			this.info.time.setText((new Double(this.getTime())).toString()); // updates time info
 
 			if(this.particle.getImage().getTranslateX() >= this.ce.getTranslateX()) { // stops, when particle reaches capacitor's wall
 				this.particle.getImage().setTranslateX(this.ce.getTranslateX());
 				this.stopExperiment();
 				this.info.velocity.setText((new Double(this.particle.getFinalVelocity(this.capacitor.getDistance()))).toString());
+				this.info.time.setText((new Double(this.particle.getTotalTime(this.capacitor.getDistance()))).toString());
 			} else if(this.particle.getImage().getTranslateX() <= this.cp.getTranslateX()) { // stops, when particle reaches capacitor's wall
 				this.particle.getImage().setTranslateX(this.cp.getTranslateX());
 				this.stopExperiment();
 				this.info.velocity.setText((new Double(this.particle.getFinalVelocity(this.capacitor.getDistance()))).toString());
+				this.info.time.setText((new Double(this.particle.getTotalTime(this.capacitor.getDistance()))).toString());
 			}
 		});
 	}
@@ -190,6 +196,11 @@ public class Experiment {
 		this.charge = new ElectricCharge(this.info.getQ());
 		this.particle = new Particle(this.field, this.charge, this.info.getM());
 
+		/* setting footer information */
+
+		this.info.field.setText((new Double(this.field.get())).toString()); // updates field info
+		this.info.acceleration.setText((new Double(this.particle.getAcceleration())).toString()); // updates acceleration info
+
 		/* creates particle image based on charge */
 
 		this.particle.setImage();
@@ -213,7 +224,6 @@ public class Experiment {
 
 	private double getTime() {
 		double seconds = (System.currentTimeMillis() - this.time);
-		seconds /= Experiment.MS;
-		return (seconds/10);
+		return (seconds/1000);
 	}
 }
