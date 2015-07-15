@@ -11,7 +11,6 @@ package capacitor.lab;
 
 import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
-import javafx.animation.Timeline;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;

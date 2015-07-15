@@ -19,6 +19,7 @@ public class Particle {
 
 	private static final String E_PATH = new String("/images/e.png");
 	private static final String P_PATH = new String("/images/p.png");
+	private static final String BLANK_PATH = new String("/images/blank.png");
 
 	private ElectricField Ef;
 	private ElectricCharge q;
@@ -46,7 +47,7 @@ public class Particle {
 
 		this. particlePosition = 0.0;
 
-		this.image = new ImageView();
+		this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.BLANK_PATH)));
 	}
 
 	/* setters */

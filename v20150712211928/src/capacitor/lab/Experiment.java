@@ -186,6 +186,14 @@ public class Experiment {
 		this.charge = new ElectricCharge(this.info.getQ());
 		this.particle = new Particle(this.field, this.charge, this.info.getM());
 
+		System.out.println("Sigma: "+this.field.getSigma()+"\nElectric field: "+this.field.get());
+		System.out.println("Distance: "+this.capacitor.getDistance()+"\nCharge: "+this.charge.get());
+		System.out.println("Mass: "+this.particle.getMass());
+		System.out.println("Acceleration: "+this.particle.getAcceleration());
+		double temp = this.particle.getAcceleration();
+		if(temp < 0) temp *= -1;
+		System.out.println("Final velocity: "+Math.sqrt(2 * temp * this.capacitor.getDistance()));
+
 		/* creates particle image based on charge */
 
 		this.particle.setImage();
@@ -209,6 +217,6 @@ public class Experiment {
 
 	private double getTime() {
 		double seconds = (System.currentTimeMillis() - this.time);
-		return (seconds/1000);
+		return (seconds/1000000);
 	}
 }
