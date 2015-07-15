@@ -35,6 +35,8 @@ public class Particle {
 
 	private ImageView image; // image of particle
 
+	private double vf;
+
 	public Particle(ElectricField Ef, ElectricCharge q, double m) {
 		this.Ef = Ef;
 		this.q = q;
@@ -48,6 +50,8 @@ public class Particle {
 		this. particlePosition = 0.0;
 
 		this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.BLANK_PATH)));
+
+		this.vf = 0.0;
 	}
 
 	/* setters */
@@ -74,6 +78,10 @@ public class Particle {
 	public void setImage() { // sets image based on charge
 		if(this.q.get() < 0) this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.E_PATH)));
 		else this.image = new ImageView(new Image(getClass().getResourceAsStream(Particle.P_PATH)));
+	}
+
+	public void setFinalVelocity(double vf) {
+		this.vf = vf;
 	}
 
 	/* getters */
@@ -111,6 +119,11 @@ public class Particle {
 
 	public ImageView getImage() { return this.image; }
 
+	public double getFinalVelocity(double d) {
+		this.calculateFinalVelocity(d);
+		return this.vf;
+	}
+
 	/* methods */
 
 	private void calculateAcceleration() {
@@ -132,11 +145,16 @@ public class Particle {
 	private void calculateTotalTime(double d) { // calculates time taken to travel a distance d
 		double a = this.getAcceleration();
 		if(a < 0) a *= -1;
-		this.t = Math.sqrt((2 * d)/a);
+		this.t = (double) Math.sqrt((2 * d)/a);
 	}
 
 	private void calculateParticlePosition(double length, double t, double d) { // calculates particle position inside capacitor
 		this.particlePosition = ((length * this.getPosition(t))/d);
-		//if(this.q.get() < 0) this.particlePosition *= -1;
+	}
+
+	private void calculateFinalVelocity(double d) {
+		double a = this.getAcceleration();
+		if(a < 0) a *= -1;
+		this.vf = Math.sqrt(2 * a * d);
 	}
 }
